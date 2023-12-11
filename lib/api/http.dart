@@ -35,8 +35,8 @@ class MockApi {
       final List<dynamic> users = jsonDecode(response.body);
 
       bool userExists = users.any((user) =>
-          user['user_name'] == loginController.text &&
-          user['password'] == passwordController.text);
+          user['user_name'] == loginController.text.trim() &&
+          user['password'] == passwordController.text.trim());
 
       if (userExists) {
         showPopup(context, 'Usuário autenticado com sucesso!');
@@ -46,8 +46,8 @@ class MockApi {
         await http.post(
           _url,
           body: jsonEncode({
-            'user_name': loginController.text,
-            'password': passwordController.text,
+            'user_name': loginController.text.trim(),
+            'password': passwordController.text.trim(),
           }),
           headers: {'Content-Type': 'application/json'},
         );
