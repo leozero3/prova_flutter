@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:prova_flutter/pages/info_page/info_store.dart';
+import 'package:prova_flutter/pages/widgets/privacy_policy.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
@@ -82,14 +82,15 @@ class _InfoPageContentState extends State<_InfoPageContent> {
                                     Icons.delete,
                                     color: Colors.red,
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
                                           title: const Text('Confirmação'),
                                           content: const Text(
-                                              'Tem certeza que deseja excluir?'),
+                                            'Tem certeza que deseja excluir?',
+                                          ),
                                           actions: [
                                             TextButton(
                                               onPressed: () {
@@ -98,9 +99,10 @@ class _InfoPageContentState extends State<_InfoPageContent> {
                                               child: const Text('Cancelar'),
                                             ),
                                             TextButton(
-                                              onPressed: () {
+                                              onPressed: () async {
                                                 _infoScreenStore.clearFields();
-                                                _infoScreenStore.saveData();
+                                                await _infoScreenStore
+                                                    .saveData();
                                                 Navigator.of(context).pop();
                                               },
                                               child: const Text('Confirmar'),
@@ -158,8 +160,7 @@ class _InfoPageContentState extends State<_InfoPageContent> {
                                         actions: [
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.of(context)
-                                                  .pop(); // Fecha o popup
+                                              Navigator.of(context).pop();
                                             },
                                             child: const Text('OK'),
                                           ),
@@ -211,20 +212,7 @@ class _InfoPageContentState extends State<_InfoPageContent> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: () async {
-                      await launchUrl(
-                        Uri.https('www.google.com'),
-                        mode: LaunchMode.platformDefault,
-                      );
-                    },
-                    child: const SizedBox(
-                      child: Text(
-                        'Política de Privacidade',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  ),
+                  const PrivacyPolicy(),
                   const SizedBox(height: 20),
                 ],
               ),

@@ -92,9 +92,8 @@ class _LoginFormState extends State<_LoginForm> {
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  controller.loginUser();
-                  Navigator.of(context).popAndPushNamed('/info-page');
-                } else {}
+                  controller.loginUser(context);
+                }
               },
               child: const Text('Entrar',
                   style: TextStyle(fontSize: 18, color: Colors.white)),
@@ -128,7 +127,6 @@ class TxtFormField extends StatelessWidget {
       controller: controller,
       validator: validator,
       obscureText: obscureText,
-      // enabled: enabled,
       keyboardType: keyboardType,
       maxLength: 20,
       style: const TextStyle(

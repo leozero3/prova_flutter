@@ -11,41 +11,57 @@ class MockApi {
 
   UserModel? userModel;
 
-  // a funcao getUser() nao esta sendo usada nesta versao,
-  Future<void> getUser() async {
-    final response = await http.get(_url);
-    if (response.statusCode == 200) {
-      final List<dynamic> users = jsonDecode(response.body);
-      for (var user in users) {}
-    } else {
-      print('Falha na requisição: ${response.statusCode}');
-    }
-  }
-
-  Future<void> loginUser() async {
-    final response = await http.post(
-      _url,
-      body: jsonEncode({
-        'user_name': loginController.text,
-        'password': passwordController.text,
-      }),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print('Dados do usuário enviados com sucesso!');
-    } else {
-      print(
-          'Falha ao enviar dados do usuário. Código de resposta: ${response.statusCode}');
-    }
+  void dispose() {
+    loginController.dispose();
+    passwordController.dispose();
   }
 
   void showPopup(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    if (scaffoldMessenger.mounted) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  Future<void> loginUser(BuildContext context) async {
+    final response = await http.get(_url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> users = jsonDecode(response.body);
+
+      bool userExists = users.any((user) =>
+          user['user_name'] == loginController.text &&
+          user['password'] == passwordController.text);
+
+      if (userExists) {
+        showPopup(context, 'Usuário autenticado com sucesso!');
+        await Future.delayed(const Duration(seconds: 2));
+        Navigator.of(context).pushNamed('/info-page');
+      } else {
+        await http.post(
+          _url,
+          body: jsonEncode({
+            'user_name': loginController.text,
+            'password': passwordController.text,
+          }),
+          headers: {'Content-Type': 'application/json'},
+        );
+
+        showPopup(context, 'Novo usuário criado com sucesso!');
+        await Future.delayed(const Duration(seconds: 2));
+
+        Navigator.of(context).pushNamed('/info-page');
+      }
+    } else {
+      showPopup(
+        context,
+        'Falha na requisição: ${response.statusCode}',
+      );
+    }
   }
 }

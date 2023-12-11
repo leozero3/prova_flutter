@@ -22,14 +22,10 @@ abstract class _InfoPageStore with Store {
 
   @action
   Future<void> saveData() async {
-    if (titleController.text.isNotEmpty && textController.text.isNotEmpty) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('titulo', titleController.text);
-      prefs.setString('texto', textController.text);
-      isSaving = false;
-    } else {
-      return;
-    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('titulo', titleController.text);
+    prefs.setString('texto', textController.text);
+    isSaving = false;
   }
 
   @action
