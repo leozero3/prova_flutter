@@ -70,8 +70,10 @@ class _LoginFormState extends State<_LoginForm> {
                 return 'Campo obrigatório';
               } else if (password.length < 2 && password.length > 20) {
                 return 'Numero de caracteres proibidos, de 2 a 20 caracteres';
-              } else {
+              } else if (RegExp(r'^[a-zA-Z0-9]+$').hasMatch(password)) {
                 return null;
+              } else {
+                return 'Senha não pode conter caracteres especiais';
               }
             },
             obscureText: true,
