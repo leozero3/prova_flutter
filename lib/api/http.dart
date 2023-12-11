@@ -1,33 +1,34 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:prova_flutter/model/user_model.dart';
 
 class MockApi {
+  TextEditingController loginController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   final _url =
       Uri.parse('https://6572228ed61ba6fcc0146eb1.mockapi.io/api/v1/users');
 
   UserModel? userModel;
 
-  Future<void> fetchData() async {
+  // a funcao getUser() nao esta sendo usada nesta versao,
+  Future<void> getUser() async {
     final response = await http.get(_url);
-
     if (response.statusCode == 200) {
-      // Sucesso na requisição
       final List<dynamic> users = jsonDecode(response.body);
-      for (var user in users) {
-        print(
-            'Usuário: ${user['user_name']}, Senha: ${user['password']}, ID: ${user['id']}');
-      }
+      for (var user in users) {}
     } else {
-      // Falha na requisição
       print('Falha na requisição: ${response.statusCode}');
     }
   }
 
-  Future<void> postUser() async {
+  Future<void> loginUser() async {
     final response = await http.post(
       _url,
-      body: jsonEncode(userModel!.toJson()),
+      body: jsonEncode({
+        'user_name': loginController.text,
+        'password': passwordController.text,
+      }),
       headers: {'Content-Type': 'application/json'},
     );
 
@@ -37,5 +38,14 @@ class MockApi {
       print(
           'Falha ao enviar dados do usuário. Código de resposta: ${response.statusCode}');
     }
+  }
+
+  void showPopup(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 }

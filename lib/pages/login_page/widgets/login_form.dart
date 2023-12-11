@@ -1,7 +1,7 @@
 part of '../login_page.dart';
 
 class _LoginForm extends StatefulWidget {
-  const _LoginForm({Key? key}) : super(key: key);
+  const _LoginForm();
 
   @override
   _LoginFormState createState() => _LoginFormState();
@@ -9,8 +9,7 @@ class _LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<_LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  MockApi controller = MockApi();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,16 @@ class _LoginFormState extends State<_LoginForm> {
             ),
           ),
           TxtFormField(
-            controller: loginController,
+            controller: controller.loginController,
+            validator: (userLogin) {
+              if (userLogin!.isEmpty) {
+                return 'Campo Obrigatorio';
+              } else if (userLogin.length < 2 && userLogin.length > 20) {
+                return 'Numero de caracteres proibidos, de 2 a 20 caracteres';
+              } else {
+                return null;
+              }
+            },
             keyboardType: TextInputType.emailAddress,
             prefixIcon: const Icon(
               Icons.person,
@@ -56,7 +64,16 @@ class _LoginFormState extends State<_LoginForm> {
             ),
           ),
           TxtFormField(
-            controller: passwordController,
+            controller: controller.passwordController,
+            validator: (password) {
+              if (password!.isEmpty) {
+                return 'Campo obrigatório';
+              } else if (password.length < 2 && password.length > 20) {
+                return 'Numero de caracteres proibidos, de 2 a 20 caracteres';
+              } else {
+                return null;
+              }
+            },
             obscureText: true,
             prefixIcon: const Icon(
               Icons.lock,
@@ -67,20 +84,17 @@ class _LoginFormState extends State<_LoginForm> {
           SizedBox(
             width: MediaQuery.of(context).size.width / 2,
             height: 50,
-            child: OutlinedButton(
+            child: FilledButton(
               style: const ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(
                   Color(0xFF44BD6E),
                 ),
               ),
               onPressed: () {
-                MockApi().fetchData();
-                print('=======================');
-                MockApi().postUser();
-                print('=======================');
-                MockApi().fetchData();
-                print('=======================');
-                Navigator.of(context).pushNamed('/info-page');
+                if (_formKey.currentState!.validate()) {
+                  controller.loginUser();
+                  Navigator.of(context).popAndPushNamed('/info-page');
+                } else {}
               },
               child: const Text('Entrar',
                   style: TextStyle(fontSize: 18, color: Colors.white)),
@@ -97,19 +111,22 @@ class TxtFormField extends StatelessWidget {
   TextInputType? keyboardType;
   bool obscureText;
   Widget? prefixIcon;
+  String? Function(String?)? validator;
+
   TxtFormField({
-    Key? key,
+    super.key,
     required this.controller,
     this.keyboardType,
     this.obscureText = false,
     this.prefixIcon,
-  }) : super(key: key);
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      validator: null,
+      validator: validator,
       obscureText: obscureText,
       // enabled: enabled,
       keyboardType: keyboardType,

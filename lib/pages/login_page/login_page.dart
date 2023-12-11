@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prova_flutter/api/http.dart';
+import 'package:url_launcher/url_launcher.dart';
 part 'widgets/login_form.dart';
 
 class LoginPage extends StatelessWidget {
@@ -22,9 +23,14 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Center(child: _LoginForm()),
+              const Center(child: _LoginForm()),
               GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  await launchUrl(
+                    Uri.https('www.google.com.br'),
+                    mode: LaunchMode.platformDefault,
+                  );
+                },
                 child: const SizedBox(
                   child: Text(
                     'Política de Privacidade',

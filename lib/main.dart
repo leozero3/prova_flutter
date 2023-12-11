@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => LoginPage(),
-        '/info-page': (context) => InfoScreen(),
+        '/info-page': (context) => const InfoPage(),
       },
     );
   }
